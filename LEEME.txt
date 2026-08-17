@@ -1,0 +1,37 @@
+Tótem Prevención — Stracon
+==========================
+
+Mockup del flujo de ingreso a faena para Stracon.
+
+Flujo:
+  1. RUT de la empresa contratista
+  2. RUT del trabajador
+  3. Verificación de acreditación (documentación)
+  4. Si acreditado → revisión de EPP con cámara
+  5. Si EPP OK → código QR
+  6. Vuelta al inicio
+
+Empresa habilitada:
+  RUT: 76.485.491-8  —  Stracon
+
+Trabajadores mock (editar en src/data/trabajadores.js):
+
+  ACREDITADO (pasa a EPP y QR):
+    RUT: 24.827.796-3  —  Tanya Medina
+
+  NO ACREDITADO (rechazo en acreditación):
+    RUT: 12.345.678-5  —  María González
+
+  Cualquier otro RUT válido → "Trabajador no registrado"
+
+Instalación:
+  cd prevencionstracon
+  npm install
+  npm run dev   →  http://localhost:5200
+
+Voz (Google TTS):
+  Misma API key que el tótem médico. Opciones:
+    - prevencionstracon/.env.local  (copiar desde .env.example)
+    - ../.env.local del repo padre (se detecta solo al hacer npm run dev)
+  Reinicia npm run dev después de crear o cambiar el .env.
+  En consola del navegador: import.meta.env.VITE_GOOGLE_TTS_API_KEY debe tener valor.

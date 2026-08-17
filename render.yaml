@@ -1,0 +1,19 @@
+# Blueprint de Render — Tótem Prevención (Web Service Node + Express)
+# TTS: POST /api/tts en el servidor (sin API key en el navegador).
+# Nota: headers de cache NO van aquí (solo en static sites).
+
+services:
+  - type: web
+    name: prevencionstracon
+    runtime: node
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    autoDeploy: true
+    envVars:
+      - key: GOOGLE_TTS_API_KEY
+        sync: false
+      # Build + fallback cliente (igual que tótem médico):
+      - key: VITE_GOOGLE_TTS_API_KEY
+        sync: false
+      - key: NODE_VERSION
+        value: "22.12.0"

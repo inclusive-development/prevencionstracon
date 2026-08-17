@@ -1,0 +1,20 @@
+# Logs / build
+node_modules
+dist
+dist-ssr
+*.log
+
+# Secrets
+.env
+.env.local
+.env.*.local
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+
+# Original upload (logo ya está en src/assets)
+PHOTO-*.jpeg
+PHOTO-*.jpg
