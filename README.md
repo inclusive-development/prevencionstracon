@@ -50,12 +50,33 @@ Verifica logs al arrancar: `TTS key: ok`
 
 Verifica en el navegador: `https://TU-URL.onrender.com/api/health` → `{"ok":true,"tts":true}`
 
-### Google Cloud — referentes HTTP
+## Solución error 403 TTS (Microsoft en vez de Google)
 
-Agrega la URL de Render a los referentes de la API key:
+Si la consola muestra `Requests from referer ... are blocked`, la API key de Google tiene **restricción HTTP referrer** y bloquea:
 
-```
-https://prevencionstracon.onrender.com/*
-https://*.onrender.com/*
-http://localhost:5200/*
-```
+| Origen | Referer | Qué pasa |
+|--------|---------|----------|
+| Servidor `/api/tts` | *(vacío)* | 403 → proxy falla |
+| Navegador directo | `https://prevencionstracon.onrender.com/` | 403 si esa URL no está en la lista |
+| Fallback | — | Voz Microsoft del sistema |
+
+### Arreglo (Google Cloud Console)
+
+1. [Credenciales](https://console.cloud.google.com/apis/credentials) → tu API key (o crea una nueva solo para servidor).
+2. **Key servidor** → variable `GOOGLE_TTS_API_KEY` en Render:
+   - **Application restrictions:** `None` *(no uses HTTP referrers en esta key)*
+   - **API restrictions:** `Cloud Text-to-Speech API`
+3. **Key cliente** (opcional) → `VITE_GOOGLE_TTS_API_KEY` en Render (redeploy tras cambiar):
+   - **Application restrictions:** `HTTP referrers`
+   - Agrega:
+     ```
+     https://prevencionstracon.onrender.com/*
+     https://*.onrender.com/*
+     http://localhost:5200/*
+     ```
+4. En Render → **Environment** → pega la key servidor en `GOOGLE_TTS_API_KEY`.
+5. **Manual Deploy** (rebuild si cambiaste `VITE_*`).
+
+Con la key servidor bien configurada, `/api/tts` funciona y oirás la voz Google (Chirp/Neural2) sin depender del fallback Microsoft.
+
+> **Seguridad:** si la key apareció en la consola del navegador, rota la key en Google Cloud y actualiza Render.

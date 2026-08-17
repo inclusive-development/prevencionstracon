@@ -5,7 +5,7 @@
 # El proxy TTS vive en POST /api/tts del servidor Express.
 #
 # Deploy: Render Dashboard → New → Blueprint → repo inclusive-development/prevencionstracon
-# Variables secretas (Environment): GOOGLE_TTS_API_KEY y VITE_GOOGLE_TTS_API_KEY
+# Variables secretas (Environment): GOOGLE_TTS_API_KEY (servidor, sin HTTP referrer) y opcional VITE_GOOGLE_TTS_API_KEY (cliente, con referrers Render)
 
 services:
   - type: web

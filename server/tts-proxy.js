@@ -33,7 +33,11 @@ export async function proxyTtsSynthesis(body) {
 
 export async function handleTtsRequest(req, res) {
   try {
-    const { status, data } = await proxyTtsSynthesis(req.body)
+  const { status, data } = await proxyTtsSynthesis(req.body)
+    if (status === 403 && data?.error?.message?.includes('referer')) {
+      data.hint =
+        'GOOGLE_TTS_API_KEY en Render debe ser una key SOLO servidor: Application restrictions = None, API restrictions = Cloud Text-to-Speech API. No uses restricción HTTP referrer en esa key.'
+    }
     res.status(status).json(data)
   } catch (err) {
     res.status(502).json({ error: String(err) })

@@ -376,6 +376,12 @@ class TTSService {
     try {
       return await tryProxy()
     } catch (proxyErr) {
+      const msg = String(proxyErr?.message || proxyErr)
+      if (msg.includes('403') && msg.includes('referer')) {
+        console.error(
+          '[TTS] 403 referrer: configura GOOGLE_TTS_API_KEY en Render sin restricción HTTP referrer (key solo servidor). Ver README → Solución error 403.',
+        )
+      }
       console.warn('[TTS] Proxy /api/tts falló, probando Google directo (tótem médico):', proxyErr)
       return tryDirect()
     }
