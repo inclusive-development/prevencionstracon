@@ -197,6 +197,33 @@
   object-fit: contain;
 }
 
+.stracon-brand-mark {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1;
+}
+
+.stracon-brand-tech {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(11px, 2vw, 14px);
+  letter-spacing: 0.02em;
+  margin-top: 3px;
+  padding-right: 2px;
+  color: var(--soft-ink, #1a1a1a);
+}
+
+.stracon-brand-mark--dark .stracon-brand-tech {
+  color: #ffffff;
+}
+
+.totem-prevencion .brand-stracon .stracon-brand-tech {
+  font-size: 9px;
+  margin-top: 1px;
+  letter-spacing: 0.03em;
+}
+
 /* Nav blanco con logo CGP */
 .totem-prevencion .totem-header--epp {
   position: relative;
@@ -345,6 +372,11 @@
 
   .totem-prevencion .totem-header--epp {
     padding: 12px 24px;
+  }
+
+  .totem-prevencion .brand-stracon .stracon-brand-tech {
+    font-size: 10px;
+    margin-top: 2px;
   }
 
   .totem-prevencion .brand-logo-stracon {
