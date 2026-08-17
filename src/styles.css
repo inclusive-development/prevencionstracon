@@ -207,9 +207,9 @@
 .stracon-brand-tech {
   font-family: 'Inter', system-ui, sans-serif;
   font-weight: 700;
-  font-size: clamp(11px, 2vw, 14px);
+  font-size: clamp(14px, 2.8vw, 18px);
   letter-spacing: 0.02em;
-  margin-top: 3px;
+  margin-top: 0;
   padding-right: 2px;
   color: var(--soft-ink, #1a1a1a);
 }
@@ -219,8 +219,8 @@
 }
 
 .totem-prevencion .brand-stracon .stracon-brand-tech {
-  font-size: 9px;
-  margin-top: 1px;
+  font-size: 12px;
+  margin-top: -1px;
   letter-spacing: 0.03em;
 }
 
