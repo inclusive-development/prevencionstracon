@@ -36,4 +36,26 @@ VITE_GOOGLE_TTS_API_KEY=tu_key
 
 ## Deploy (Render)
 
-Blueprint en `render.yaml`. Servicio web Node con build Vite + Express estático.
+Blueprint en [`render.yaml`](render.yaml). **Web Service Node** (no Static Site): Express sirve la SPA y el proxy `/api/tts`.
+
+1. Repo: [inclusive-development/prevencionstracon](https://github.com/inclusive-development/prevencionstracon)
+2. Render → **New** → **Blueprint** → conectar el repo
+3. Render crea el servicio `prevencionstracon` automáticamente
+4. En **Environment**, agrega:
+   - `GOOGLE_TTS_API_KEY` — TTS en servidor
+   - `VITE_GOOGLE_TTS_API_KEY` — misma key (build Vite + fallback navegador)
+5. **Manual Deploy** o espera auto-deploy en push a `master`
+
+Verifica logs al arrancar: `TTS key: ok`
+
+Verifica en el navegador: `https://TU-URL.onrender.com/api/health` → `{"ok":true,"tts":true}`
+
+### Google Cloud — referentes HTTP
+
+Agrega la URL de Render a los referentes de la API key:
+
+```
+https://prevencionstracon.onrender.com/*
+https://*.onrender.com/*
+http://localhost:5200/*
+```

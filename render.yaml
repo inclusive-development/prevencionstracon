@@ -1,13 +1,21 @@
-# Blueprint de Render — Tótem Prevención (Web Service Node + Express)
-# TTS: POST /api/tts en el servidor (sin API key en el navegador).
-# Nota: headers de cache NO van aquí (solo en static sites).
+# Blueprint de Render — Tótem Prevención Stracon (Web Service Node + Express)
+# Docs: https://render.com/docs/blueprint-spec
+#
+# Importante: usar Web Service (runtime: node), NO Static Site.
+# El proxy TTS vive en POST /api/tts del servidor Express.
+#
+# Deploy: Render Dashboard → New → Blueprint → repo inclusive-development/prevencionstracon
+# Variables secretas (Environment): GOOGLE_TTS_API_KEY y VITE_GOOGLE_TTS_API_KEY
 
 services:
   - type: web
     name: prevencionstracon
     runtime: node
+    plan: free
+    region: oregon
     buildCommand: npm ci && npm run build
     startCommand: npm start
+    healthCheckPath: /api/health
     autoDeploy: true
     envVars:
       - key: GOOGLE_TTS_API_KEY
