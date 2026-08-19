@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url'
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import { createTtsProxyMiddleware } from './server/tts-proxy.js'
+import { getMqttStatus, handleLedPublish, initMqtt } from './server/mqtt-client.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const DEV_HOST = process.env.VITE_DEV_HOST || '0.0.0.0'
@@ -16,14 +17,60 @@ function resolveEnvDir() {
   return __dirname
 }
 
+function mqttApiMiddleware() {
+  return async (req, res, next) => {
+    const url = req.url?.split('?')[0] || ''
+
+    if (url === '/api/mqtt/status' && req.method === 'GET') {
+      res.setHeader('Content-Type', 'application/json')
+      res.end(JSON.stringify(getMqttStatus()))
+      return
+    }
+
+    if (url === '/api/mqtt/led/on' && req.method === 'POST') {
+      const fakeRes = {
+        status(code) {
+          res.statusCode = code
+          return fakeRes
+        },
+        json(body) {
+          res.setHeader('Content-Type', 'application/json')
+          res.end(JSON.stringify(body))
+        },
+      }
+      await handleLedPublish(req, fakeRes, 'on')
+      return
+    }
+
+    if (url === '/api/mqtt/led/off' && req.method === 'POST') {
+      const fakeRes = {
+        status(code) {
+          res.statusCode = code
+          return fakeRes
+        },
+        json(body) {
+          res.setHeader('Content-Type', 'application/json')
+          res.end(JSON.stringify(body))
+        },
+      }
+      await handleLedPublish(req, fakeRes, 'off')
+      return
+    }
+
+    next()
+  }
+}
+
 function ttsProxyPlugin() {
   return {
     name: 'tts-proxy',
     configureServer(server) {
+      initMqtt()
+      server.middlewares.use(mqttApiMiddleware())
       server.middlewares.use('/api/tts', createTtsProxyMiddleware())
       server.middlewares.use('/api/health', (_req, res) => {
         res.setHeader('Content-Type', 'application/json')
-        res.end(JSON.stringify({ ok: true, tts: true }))
+        res.end(JSON.stringify({ ok: true, tts: true, mqtt: getMqttStatus() }))
       })
     },
   }

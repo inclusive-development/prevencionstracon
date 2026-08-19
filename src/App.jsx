@@ -2,11 +2,14 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import AvatarStage from '@shared/components/AvatarStage'
 import ScreenTransition from '@shared/components/ScreenTransition'
 import Stepper from '@shared/components/Stepper'
+import VoiceMicButton from '@shared/components/VoiceMicButton'
 import EppSplash from './components/EppSplash'
 import StraconLogo from './components/StraconLogo'
 import { TENANT, isEmpresaRutAllowed } from './data/tenants'
 import { avatar } from '@shared/avatar/controller'
+import { mqttLed } from '@shared/api/mqtt'
 import { tts } from '@shared/voice/tts'
+import { parseLedVoiceCommand } from '@shared/utils/ledVoiceCmd'
 import AcreditacionScreen from './screens/AcreditacionScreen'
 import EppFlow from './screens/EppFlow'
 import PrevencionRutScreen from './screens/PrevencionRutScreen'
@@ -157,6 +160,21 @@ export default function App() {
     setFlowKey((k) => k + 1)
     goTo('rut-empresa', 'from-welcome')
   }
+
+  const handleLedVoice = useCallback(async (text) => {
+    const cmd = parseLedVoiceCommand(text)
+    if (!cmd) return
+
+    tts.unlock()
+    try {
+      await mqttLed(cmd)
+      avatar.greet()
+      await tts.speak(cmd === 'on' ? 'Listo, LED encendido.' : 'Listo, LED apagado.')
+    } catch (err) {
+      console.warn('[MQTT]', err)
+      await tts.speak('No pude conectar con el dispositivo. Revisa el broker MQTT.')
+    }
+  }, [])
 
   const empresaValidada = (r) => {
     if (!isEmpresaRutAllowed(r)) return
@@ -310,6 +328,14 @@ export default function App() {
                   <span className="floating-action-sub">Empresa, trabajador, acreditación y EPP</span>
                 </span>
               </button>
+              <VoiceMicButton
+                className="epp-led-voice-mic"
+                mode="free"
+                label="Comando LED"
+                hint='Di: "encender led" o "apagar led"'
+                showTranscript={false}
+                onResult={(text) => void handleLedVoice(text)}
+              />
             </div>
           )}
         </div>

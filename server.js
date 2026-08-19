@@ -2,6 +2,7 @@ import express from 'express'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { getTtsApiKey, handleTtsRequest } from './server/tts-proxy.js'
+import { getMqttStatus, handleLedPublish, initMqtt } from './server/mqtt-client.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
@@ -11,12 +12,22 @@ const distDir = path.join(__dirname, 'dist')
 app.disable('x-powered-by')
 app.use(express.json({ limit: '32kb' }))
 
+initMqtt()
+
 app.get('/api/health', (_req, res) => {
   res.json({
     ok: true,
     tts: Boolean(getTtsApiKey()),
+    mqtt: getMqttStatus(),
   })
 })
+
+app.get('/api/mqtt/status', (_req, res) => {
+  res.json(getMqttStatus())
+})
+
+app.post('/api/mqtt/led/on', (req, res) => handleLedPublish(req, res, 'on'))
+app.post('/api/mqtt/led/off', (req, res) => handleLedPublish(req, res, 'off'))
 
 app.post('/api/tts', handleTtsRequest)
 
@@ -36,5 +47,8 @@ app.use((_req, res) => {
 })
 
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Stracon prevención → http://0.0.0.0:${PORT} | TTS key: ${getTtsApiKey() ? 'ok' : 'FALTA'}`)
+  const mqtt = getMqttStatus()
+  console.log(
+    `Stracon prevención → http://0.0.0.0:${PORT} | TTS: ${getTtsApiKey() ? 'ok' : 'FALTA'} | MQTT: ${mqtt.brokerUrl}`,
+  )
 })

@@ -23,5 +23,9 @@ services:
       # Build + fallback cliente (igual que tótem médico):
       - key: VITE_GOOGLE_TTS_API_KEY
         sync: false
+      - key: MQTT_BROKER_URL
+        sync: false
+      - key: MQTT_TOPIC_LED
+        value: totem/led
       - key: NODE_VERSION
         value: "22.12.0"
